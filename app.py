@@ -1,6 +1,7 @@
 import datetime
 import os.path
 import time
+import urlparse
 import psycopg2
 from flask import Flask, render_template, redirect, url_for
 from flask_wtf import FlaskForm
@@ -17,6 +18,17 @@ app.secret_key = 'developer'
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
+def open_db_conn():
+    urlparse.uses_netloc.append("postgres")
+    url = urlparse.urlparse(DATABASE_URL)
+    conn = psycopg2.connect(
+        database=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port)
+    return conn
+
 
 class ProgramForm(FlaskForm):
     program = FileField(validators=[FileRequired()])
@@ -32,13 +44,12 @@ def submit():
     if form.validate_on_submit():
         f = form.program.data
         filename = secure_filename(f.filename)
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        conn = open_db_conn()
         cur = conn.cursor()
-        cur.execute('INSERT INTO programs_tmp (id, email, filename, timestamp, file_bin) VALUES \
+        cur.execute('INSERT INTO programs (id, email, filename, timestamp, file_bin) VALUES \
                         (DEFAULT, %s, %s, DEFAULT, %s);',
                     (form.email.data, filename, f.read()))
         conn.commit()
-        # cur.close()
         conn.close()
         return redirect(url_for('submit'))
     else:
@@ -47,11 +58,4 @@ def submit():
 
 
 if __name__ == '__main__':
-    create_table_string = 'create table if not exists programs (id serial primary key, timestamp timestamp default current_timestamp, email varchar(200) not null, problem varchar(200) not null, filename varchar(200) not null, language varchar(50) not null, file_blob bytea);'
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    cur = conn.cursor()
-    cur.execute(create_table_string)
-    conn.commit()
-    # cur.close()
-    conn.close()
     app.run()
