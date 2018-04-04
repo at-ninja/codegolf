@@ -35,7 +35,7 @@ def submit():
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute('INSERT INTO programs (id, email, filename, timestamp, file_bin) VALUES \
-                        (DEFUALT, %s, %s, DEFAULT, %s)',
+                        (DEFAULT, %s, %s, DEFAULT, %s)',
                     (form.email.data, filename, f.read()))
         return redirect(url_for('submit'))
     else:
