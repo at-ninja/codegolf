@@ -46,8 +46,8 @@ def submit():
         filename = secure_filename(f.filename)
         conn = open_db_conn()
         cur = conn.cursor()
-        cur.execute('INSERT INTO programs (id, email, filename, timestamp, file_bin) VALUES \
-                        (DEFAULT, %s, %s, DEFAULT, %s);',
+        cur.execute('INSERT INTO programs (email, problem, filename, language, file_blob) VALUES \
+                        (%s, \'test\', %s, \'test\', %s);',
                     (form.email.data, filename, f.read()))
         conn.commit()
         conn.close()
