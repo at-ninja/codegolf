@@ -38,7 +38,7 @@ def submit():
                         (DEFAULT, %s, %s, DEFAULT, %s);',
                     (form.email.data, filename, f.read()))
         conn.commit()
-        cur.close()
+        # cur.close()
         conn.close()
         return redirect(url_for('submit'))
     else:
@@ -52,6 +52,6 @@ if __name__ == '__main__':
     cur = conn.cursor()
     cur.execute(create_table_string)
     conn.commit()
-    cur.close()
+    # cur.close()
     conn.close()
     app.run()
