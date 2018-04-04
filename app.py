@@ -36,16 +36,7 @@ def submit():
         cur = conn.cursor()
         cur.execute('INSERT INTO programs (email, filename, file_bin) VALUES \
                         (%s, %s, %s)',
-                    (form.email.data, filename, form.program.data.read()))
-        # f.save(os.path.join(
-        #     app.instance_path,
-        #     'programs',
-        #     '{0}-{1}-{2}'.format(
-        #         datetime.datetime.fromtimestamp(
-        #             time.time()).strftime('%Y-%m-%d_%H:%M:%S'),
-        #         form.email.data,
-        #         filename)
-        # ))
+                    (form.email.data, filename, psycopg2.Binary(f.read())))
         return redirect(url_for('submit'))
     else:
         print(form.errors)
