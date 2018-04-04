@@ -36,7 +36,7 @@ def submit():
         cur = conn.cursor()
         cur.execute('INSERT INTO programs (email, filename, file_bin) VALUES \
                         (%s, %s, %s)',
-                    (form.email.data, filename, form.program.data))
+                    (form.email.data, filename, form.program.data.read()))
         # f.save(os.path.join(
         #     app.instance_path,
         #     'programs',
