@@ -30,7 +30,7 @@ class ProgramForm(FlaskForm):
 def submit():
     form = ProgramForm()
     if form.validate_on_submit():
-        f = form.program.DataRequired
+        f = form.program.data
         filename = secure_filename(f.filename)
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
