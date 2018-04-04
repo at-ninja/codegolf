@@ -1,7 +1,7 @@
 import datetime
 import os.path
 import time
-from urllib.parse import urlparse
+import urllib.parse as urlparse
 import psycopg2
 from flask import Flask, render_template, redirect, url_for
 from flask_wtf import FlaskForm
