@@ -35,7 +35,7 @@ def submit():
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute('INSERT INTO programs_tmp (id, email, filename, timestamp, file_bin) VALUES \
-                        (DEFAULT, %s, %s, DEFAULT, %s)',
+                        (DEFAULT, %s, %s, DEFAULT, %s);',
                     (form.email.data, filename, f.read()))
         return redirect(url_for('submit'))
     else:
@@ -44,7 +44,7 @@ def submit():
 
 
 if __name__ == '__main__':
-    create_table_string = 'create table if not exists programs (id serial primary key, timestamp timestamp default current_timestamp, email varchar(200) not null, problem varchar(200) not null, filename varchar(200) not null, language varchar(50) not null, file_blob bytea)'
+    create_table_string = 'create table if not exists programs (id serial primary key, timestamp timestamp default current_timestamp, email varchar(200) not null, problem varchar(200) not null, filename varchar(200) not null, language varchar(50) not null, file_blob bytea);'
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
     cur.execute(create_table_string)
