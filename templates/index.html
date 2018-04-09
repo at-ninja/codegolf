@@ -11,8 +11,36 @@
 </head>
 
 <body>
-  <nav class="navbar fixed-top navbar-dark bg-primary">
-    <a class="navbar-brand" href="#">Code Golf Competition</a>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="/">Code Golf Competition</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+            Problems
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/problem/1">Problem 1</a>
+            <a class="dropdown-item" href="/problem/2">Problem 2</a>
+            <a class="dropdown-item" href="/problem/3">Problem 3</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/problem/4">Problem 4</a>
+            <a class="dropdown-item" href="/problem/5">Problem 5</a>
+            <a class="dropdown-item" href="/problem/6">Problem 6</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/problem/7">Problem 7</a>
+            <a class="dropdown-item" href="/problem/8">Problem 8</a>
+            <a class="dropdown-item" href="/problem/9">Problem 9</a>
+          </div>
+        </li>
+      </ul>
+    </div>
   </nav>
 
   <div style="margin-top:60px;" class="container">
@@ -36,6 +64,21 @@
           </div>
         </div>
         <div class="form-group">
+          <label for="problem">Problem:</label>
+          <select name="problem" required id="problem" class="custom-select">
+            <option value="" selected>Choose Problem</option>
+            <option value="0">Problem 1</option>
+            <option value="1">Problem 2</option>
+            <option value="2">Problem 3</option>
+            <option value="3">Problem 4</option>
+            <option value="4">Problem 5</option>
+            <option value="5">Problem 6</option>
+            <option value="6">Problem 7</option>
+            <option value="7">Problem 8</option>
+            <option value="8">Problem 9</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="language">Language:</label>
           <select name="language" required id="language" class="custom-select">
             <option value="" selected>Choose Language</option>
@@ -50,26 +93,6 @@
           <button type="submit" class="btn btn-primary">Run it!</button>
         </div>
       </form>
-    </div>
-
-    <div style="margin-top:20px;" class="col-xs-12">
-      <h1>
-        Leaderboards:
-      </h1>
-      <ul class="list-group">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Cras justo odio
-          <span class="badge badge-primary badge-pill">14</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Dapibus ac facilisis in
-          <span class="badge badge-primary badge-pill">2</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Morbi leo risus
-          <span class="badge badge-primary badge-pill">1</span>
-        </li>
-      </ul>
     </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
