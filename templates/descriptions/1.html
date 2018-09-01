@@ -1,1 +1,23 @@
-This is an example question. I'm trying to see if inline <b>HTML</b> works
+{% extends "description.html" %}
+{% block title %}
+<span>Fizz Buzz</span>
+{% endblock %}
+{% block description%}
+<span>
+  Write a program that prints the numbers from 1 to n. But for multiples of 3, print "Fizz" instead of the number. For
+  multiples
+  of 5, print "Buzz" instead of the number. For multiples of both 3 and 5, print "FizzBuzz" instead of the number. Your
+  program
+  must read a number from stdin, n, which will determine how many numbers to print to stdout
+</span>
+{% endblock %}
+{% block input %}
+<code>5</code>
+{% endblock %}
+{% block output %}
+<code>1</code>
+<code>2</code>
+<code>Fizz</code>
+<code>4</code>
+<code>Buzz</code>
+{% endblock %}

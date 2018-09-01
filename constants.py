@@ -27,3 +27,15 @@ def make_instance_folder(app_instance):
     if not os.path.exists(tmp):
         os.makedirs(tmp)
     [os.makedirs(x) for x in correct_problems if not os.path.exists(x)]
+
+
+def compare_rows(x, y):
+    if x.size < y.size:
+        return 1
+    if x.size > y.size:
+        return -1
+    if x.time < y.time:
+        return 1
+    if x.time > y.time:
+        return -1
+    return 0
