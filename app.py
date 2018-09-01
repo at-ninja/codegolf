@@ -1,96 +1,119 @@
-import datetime
-import os.path
+import subprocess
 import time
-import glob
-# import codejail
-# import urllib.parse as urlparse
-# import psycopg2
+import datetime
+import os
 from flask import Flask, render_template, redirect, url_for
-from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired
+from program_form import ProgramForm
 from werkzeug.utils import secure_filename
-from wtforms import validators
-from wtforms.fields.html5 import EmailField
-from wtforms.fields import SelectField
+from constants import VALID_EXTENSIONS, make_instance_folder, PROBLEMS
 
 app = Flask(__name__)
+
+make_instance_folder(app.instance_path)
 
 # set the secret key.
 app.secret_key = 'developer'
 
-language_choices = {
-    '0': 'Python3', 
-    '1': 'Python2', 
-    '2': 'Node',
-    '3': 'clang++',
-    '4': 'Java'
-}
+
+@app.route('/incorrect')
+def incorrect():
+    return render_template('incorrect.html')
 
 
-class ProgramForm(FlaskForm):
-    program = FileField(validators=[FileRequired()])
-    email = EmailField(
-        validators=[validators.DataRequired(), validators.Email()])
-    problem = SelectField(choices=[(str(x+1), 'Problem {}'.format(x+1)) for x in range(9)],
-                          validators=[validators.DataRequired()])
-    language = SelectField(choices=[(x, language_choices[x]) for x in language_choices.keys()],
-                           validators=[validators.DataRequired()])
-
-
-class Submission(object):
-    def __init__(self, email, size):
-        self.email = email
-        self.size = size
-
-
-@app.route('/', methods=('GET', 'POST'))
-def submit():
-    form = ProgramForm()
-    if form.problem is not None:
-        print(form.problem.data)
-    if form.validate_on_submit():
-        timestamp = datetime.datetime.fromtimestamp(
-            time.time()).strftime('%Y:%m:%d_%H:%M:%S')
-        f = form.program.data
-        filename = secure_filename(f.filename)
-
-        tmp_file = os.path.join(
-            app.instance_path, 'tmp', '{0}-{1}-{2}'.format(
-                timestamp, form.email.data, filename)
-        )
-        f.save(tmp_file)
-        size = os.path.getsize(tmp_file)
-
-        real_file = os.path.join(
-            app.instance_path, 'programs', '{4}-{0}-{1}-{2}-{5}-{3}'.format(
-                size, timestamp, form.email.data, filename, form.problem.data, form.language.data)
-        )
-
-        with open(tmp_file, 'r') as fp:
-            with open(real_file, 'w') as fp2:
-                fp2.write(fp.read())
-
-        os.remove(tmp_file)
-
-        return redirect(url_for('submit'))
+@app.route('/leaderboards/<problemnumber>')
+def leaderboards(problemnumber):
+    if problemnumber in [str(x) for x in PROBLEMS]:
+        return render_template('leaderboards.html', problem=problemnumber)
     else:
-        print(form.errors)
-    return render_template('index.html', form=form)
+        return redirect(url_for('submissionPage'))
 
 
 @app.route('/problem/<problemnumber>')
 def problem(problemnumber):
-    if problemnumber in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
-        submissions = glob.glob(os.path.join(
-            app.instance_path, 'programs', '{0}-*'.format(problemnumber)
-        ))
-        submissions = [Submission(email=x.split(
-            '-')[3], size=x.split('-')[1]) for x in submissions]
-        submissions.sort(key=lambda x: int(x.size))
-        submissions = submissions[:5]
-        return render_template('problem.html', problem=problemnumber, leaderboards=submissions)
+    if problemnumber in [str(x) for x in PROBLEMS]:
+        return render_template('problem.html', problem=problemnumber)
     else:
-        return redirect(url_for('submit'))
+        return redirect(url_for('submissionPage'))
+
+
+@app.route('/', methods=('GET', 'POST'))
+def submissionPage():
+    form = ProgramForm()
+    if form.validate_on_submit():
+        # If the form is valid, we want to save it, run it, and store data about it
+        filename = secure_filename(form.program.data.filename)
+        filetype = filename.split('.')[-1]
+
+        print('---------------')
+        print('New submission')
+        print(form.email.data, filename)
+
+        timestamp = datetime.datetime.fromtimestamp(
+            time.time()).strftime('%Y:%m:%d_%H:%M:%S')
+
+        # save untested to disk (tmp)
+        tmp_filename = '{3}-{0}-{1}-{2}'.format(
+            timestamp, form.email.data, filename, form.problem.data)
+
+        tmp_file = os.path.join(app.instance_path, 'tmp', tmp_filename)
+
+        form.program.data.save(tmp_file)
+
+        judge_input = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'judge_inputs', 'input{}.txt'.format(form.problem.data))
+        judge_output = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'judge_outputs', 'output{}.txt'.format(form.problem.data))
+
+        # test it
+        try:
+            print('Testing...')
+            with open(judge_input, 'r') as stdin:
+                res = subprocess.check_output(
+                    VALID_EXTENSIONS[filetype](os.path.abspath(tmp_file)),
+                    stdin=stdin)
+            with open(judge_output, 'r') as output_file:
+                output = output_file.read()
+
+            # check if the output is correct
+            if output == res.decode('UTF-8'):
+                print('Accepted submission')
+
+                # get size of file
+                filesize = os.path.getsize(tmp_file)
+
+                filename_with_size = '{0}-{1}'.format(filesize, tmp_filename)
+
+                # save the file to the accepted solutions folder
+                new_filename = os.path.join(
+                    app.instance_path, 'programs', 'correct', str(
+                        form.problem.data), filename_with_size
+                )
+                with open(tmp_file, 'r') as tmp:
+                    with open(new_filename, 'w') as new:
+                        new.write(tmp.read())
+
+                os.remove(tmp_file)
+
+                return redirect(url_for('leaderboards', problemnumber=form.problem.data))
+            else:
+                raise Exception('Wrong answer')
+        except Exception as exc:
+            print('Invalid submission')
+
+            # save the file to the incorrect solutions folder
+            new_filename = os.path.join(
+                app.instance_path, 'programs', 'incorrect', tmp_filename
+            )
+            with open(tmp_file, 'r') as tmp:
+                with open(new_filename, 'w') as new:
+                    new.write(tmp.read())
+            os.remove(tmp_file)
+
+            return redirect(url_for('incorrect'))
+
+    return render_template('index.html', form=form)
 
 
 if __name__ == '__main__':

@@ -1,110 +1,42 @@
-<!doctype html>
+{% extends "base.html" %}
+{% block content %}
+<div style="margin-top:60px;" class="container">
 
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Code Golf Judge</title>
+  <div class="col-xs-12">
+    <h1>
+      Submit:
+    </h1>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-    crossorigin="anonymous">
-</head>
-
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/">Code Golf Competition</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-      aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false">
-            Problems
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="/problem/1">Problem 1</a>
-            <a class="dropdown-item" href="/problem/2">Problem 2</a>
-            <a class="dropdown-item" href="/problem/3">Problem 3</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/problem/4">Problem 4</a>
-            <a class="dropdown-item" href="/problem/5">Problem 5</a>
-            <a class="dropdown-item" href="/problem/6">Problem 6</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/problem/7">Problem 7</a>
-            <a class="dropdown-item" href="/problem/8">Problem 8</a>
-            <a class="dropdown-item" href="/problem/9">Problem 9</a>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </nav>
-
-  <div style="margin-top:60px;" class="container">
-
-    <div class="col-xs-12">
-      <h1>
-        Submit:
-      </h1>
-
-      <form method="POST" enctype="multipart/form-data">
-        {{ form.csrf_token }}
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input required type="email" name="email" id="email" class="form-control" placeholder="Email Address">
+    <form method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        {{ form.email.label }}
+        {% for error in form.email.errors %}
+        <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+        {{ form.email(class_="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.problem.label }}
+        {% for error in form.problem.errors %}
+        <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+        {{ form.problem(class_="custom-select") }}
+      </div>
+      <div class="form-group">
+        {{ form.program.label }}
+        {% for error in form.program.errors %}
+        <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+        <div class="custom-file">
+          {{ form.program(class_="custom-file-input") }}
+          <label class="custom-file-label" for="program">Choose file</label>
         </div>
-        <div class="form-group">
-          <label for="program">Program File:</label>
-          <div class="custom-file">
-            <input required name="program" type="file" class="custom-file-input" id="program">
-            <label class="custom-file-label" for="program">Choose file</label>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="problem">Problem:</label>
-          <select name="problem" required id="problem" class="custom-select">
-            <option value="" selected>Choose Problem</option>
-            <option value="1">Problem 1</option>
-            <option value="2">Problem 2</option>
-            <option value="3">Problem 3</option>
-            <option value="4">Problem 4</option>
-            <option value="5">Problem 5</option>
-            <option value="6">Problem 6</option>
-            <option value="7">Problem 7</option>
-            <option value="8">Problem 8</option>
-            <option value="9">Problem 9</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="language">Language:</label>
-          <select name="language" required id="language" class="custom-select">
-            <option value="" selected>Choose Language</option>
-            <option value="0">Python3 (3.6.5)</option>
-            <option value="1">Python (2.7.10)</option>
-            <option value="2">Node (9.10.1)</option>
-            <option value="3">clang++ (-Wall)</option>
-            <option value="4">Java</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <button type="submit" class="btn btn-primary">Run it!</button>
-        </div>
-      </form>
-    </div>
+      </div>
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        {{ form.submit(class_="btn btn-primary") }}
+      </div>
+    </form>
   </div>
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
-  <script>
-    $('.custom-file-input').on('change', function () {
-      let fileName = $(this).val().split('\\').pop();
-      $(this).next('.custom-file-label').addClass("selected").html(fileName);
-    });
-  </script>
-</body>
+</div>
+{% endblock %}
