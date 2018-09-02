@@ -2,7 +2,7 @@ import subprocess
 import time
 import datetime
 import os
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, send_file
 from werkzeug.utils import secure_filename
 from constants import VALID_EXTENSIONS, make_instance_folder, PROBLEMS, compare_rows
 from program_form import ProgramForm
@@ -15,6 +15,28 @@ make_instance_folder(app.instance_path)
 
 # set the secret key.
 app.secret_key = 'developer'
+
+# Input / Output example files
+
+
+@app.route('/problem/inputs/input<problem>.txt')
+def inputs(problem):
+    if problem in [str(x) for x in PROBLEMS]:
+        return send_file(os.path.join(
+            'inputs', 'input_{}.txt'.format(
+                problem)
+        ), mimetype="text/plain")
+    return redirect(url_for('submissionPage'))
+
+
+@app.route('/problem/outputs/output<problem>.txt')
+def outputs(problem):
+    if problem in [str(x) for x in PROBLEMS]:
+        return send_file(os.path.join(
+            'outputs', 'output_{}.txt'.format(
+                problem)
+        ), mimetype="text/plain")
+    return redirect(url_for('submissionPage'))
 
 
 @app.route('/incorrect')
@@ -100,7 +122,8 @@ def submissionPage():
             print('Testing...')
             with open(judge_input, 'r') as stdin:
                 res = subprocess.check_output(
-                    VALID_EXTENSIONS[filetype](os.path.abspath(tmp_file)),
+                    ['python3', 'chroot_jail_script.py',
+                        os.path.abspath(tmp_file)],
                     stdin=stdin)
             with open(judge_output, 'r') as output_file:
                 output = output_file.read()
@@ -142,4 +165,4 @@ def submissionPage():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 5000), threaded=True)

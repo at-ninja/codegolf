@@ -4,10 +4,11 @@
 <div class="alert alert-secondary">
   <pre>{% block input %}{% endblock %}</pre>
 </div>
+{% block midDesc %}{% endblock %}
 <p>Your program would output:</p>
 <div class="alert alert-secondary">
   <pre>{% block output %}{% endblock %}</pre>
 </div>
 <h2>Example Input & Output</h2>
-<a class="btn btn-outline-info" href="inputs/input{{ problem }}" role="button">Input</a>
-<a class="btn btn-outline-info" href="outputs/output{{ problem }}" role="button">Output</a>
+<a download="" class="btn btn-outline-info" href="inputs/input{{ problem }}.txt" role="button">Input</a>
+<a download="" class="btn btn-outline-info" href="outputs/output{{ problem }}.txt" role="button">Output</a>

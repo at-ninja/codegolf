@@ -3,7 +3,8 @@ Constant values go here
 """
 import os
 
-PROBLEMS = list(range(1, 10))
+
+PROBLEMS = list(range(1, 8))
 
 VALID_EXTENSIONS = {
     'py': lambda x: ['python3', x],
