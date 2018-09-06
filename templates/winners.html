@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="margin-top:60px;" class="container">
+
+  <div style="margin-top:20px;" class="col-xs-12">
+    <h1>
+      Winners!
+    </h1>
+
+    <ul class="list-group">
+      <li class="list-group-item active">
+        <span>User</span>
+      </li>
+      {% for row in winners %}
+      <li class="list-group-item">
+        <span>{{row}}</span>
+      </li>
+      {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

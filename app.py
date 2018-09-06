@@ -18,6 +18,42 @@ app.secret_key = 'developer'
 
 # Input / Output example files
 
+@app.route('/winners')
+def winners():
+
+    winner_list = []
+
+    for problemnumber in PROBLEMS[::-1]:
+
+        dir_to_check = os.path.join(
+            app.instance_path, 'programs', 'correct', str(problemnumber))
+        correct_sols = [f for f in os.listdir(
+            dir_to_check) if os.path.isfile(os.path.join(dir_to_check, f))]
+
+        # convert filenames to objects
+        board = []
+        for f in correct_sols:
+            fp = os.path.join(dir_to_check, f)
+
+            size = os.path.getsize(fp)
+            email = f.split('-')[1]
+            time = f.split('-')[0]
+
+            row = LeaderboardRow(
+                size=size, email=email, time=time,
+                filename=f, active=False)
+
+            board += [row]
+
+        board.sort(key=lambda x: x.time)  # secondary sort
+        board.sort(key=lambda x: x.size)  # primary sort
+
+        filtered_board = [x.email for x in board if x.email not in winner_list]
+
+        winner_list += filtered_board[:1]
+
+    return render_template('winners.html', winners=winner_list)
+
 
 @app.route('/problem/inputs/input<problem>.txt')
 def inputs(problem):
