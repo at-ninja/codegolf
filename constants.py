@@ -8,8 +8,15 @@ PROBLEMS = list(range(1, 8))
 
 VALID_EXTENSIONS = {
     'py': lambda x: ['python3', x],
-    'js': lambda x: ['node', x]
+    'js': lambda x: ['node', x],
+    'java': None # lambda x: ['javac', x, '-d', os.path.join(os.path.dirname(__file__), 'instance', 'tmp', 'compiled')]
 }
+
+CUSTOM_EXTENSIONS = [
+    'java'
+]
+
+
 
 PROGRAMS = VALID_EXTENSIONS.keys()
 
